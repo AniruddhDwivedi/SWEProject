@@ -17,7 +17,7 @@ def create_connection():
                 database='Hospital',
                 cursorclass=pymysql.cursors.DictCursor
             )
-            print("Database connection established.")
+            print("Database connection established.");
         except pymysql.MySQLError as e:
             print(f"Database connection error: {e}")
             _connection = None

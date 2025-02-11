@@ -1,9 +1,9 @@
 from users import auth
+from scripts.util import execute_command
 from controller import sql_connect
 from scripts import display_data
 
 def main():
-    # Begin system
     print("Running System Now...")
     
     # Authenticate user and retrieve their role
@@ -16,7 +16,16 @@ def main():
         connection = sql_connect.create_connection()
         
         if connection:
-            sql_connect.close_connection(connection)
+            display_data.show_menu(user_role);
+
+            while True:
+                command = input("\nEnter a command: ").strip()
+                if command.lower() == "exit":
+                    print("Exiting system...")
+                    break
+                execute_command(command, connection)
+
+            sql_connect.close_connection()
         else:
             print("Database connection failed. Some features may not be available.")
 
@@ -25,4 +34,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

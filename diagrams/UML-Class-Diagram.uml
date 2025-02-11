@@ -1,0 +1,44 @@
+@startuml
+class Employee {
+    + empID : int
+    + DOB : date
+    + gender : char
+    + login() : void
+    + viewSessionHistory() : void
+    + changeAuthentication() : void
+}
+
+class Administrator {
+    + adminID : int
+    + authLevel : byte
+    + startServer() : void
+    + updateSystem() : void
+}
+
+class Doctor {
+    + doctorID : int
+    + hours : float
+    + viewAppointments() : void
+    + updateRecord() : void
+    + dischargePatient() : void
+}
+
+class Nurse {
+    + nurseID : int
+    + hours : float
+    + viewAppointments() : void
+    + updateRecord() : void
+}
+
+class IT_OFFICER {
+    + authActive : boolean
+    + debug() : String
+    + runTemplate() : void
+    + restartSystem() : void
+}
+
+Employee <|-- Administrator
+Administrator <|-- IT_OFFICER
+Employee <|-- Doctor
+Employee <|-- Nurse
+@enduml

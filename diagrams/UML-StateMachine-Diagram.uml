@@ -1,0 +1,23 @@
+@startuml
+[*] --> EmployeeLogin : Start
+
+EmployeeLogin --> VerifyPatientRecord : Initiate Booking
+
+VerifyPatientRecord --> RegisterPatient : Patient Record Not Found
+RegisterPatient --> ProvidePatientDetails : Registration Complete
+
+VerifyPatientRecord --> ProvidePatientDetails : Patient Exists
+ProvidePatientDetails --> AssignDoctor : Details Provided
+
+AssignDoctor --> ChooseAppointmentSlot : Doctor Selected
+ChooseAppointmentSlot --> ConfirmBooking : Time Slot Selected
+ConfirmBooking --> BookingSuccessful : Confirm Appointment
+
+BookingSuccessful --> CancelBooking : Cancel Appointment
+CancelBooking --> EndSession : Appointment Cancelled
+
+BookingSuccessful --> AppointmentComplete : End
+AppointmentComplete --> EndSession : End
+
+EndSession --> [*]
+@enduml

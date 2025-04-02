@@ -1,6 +1,8 @@
 from scripts.commands import Commands
 from scripts.display_data import display_table
 from users.auth import create_user, delete_user
+import os
+import json
 
 def apply_appointment(connection):
     cursor = connection.cursor()
@@ -45,20 +47,101 @@ def apply_appointment(connection):
     cursor.close()
 
 
-def cancel_appointment():
-    print("Cancelling an appointment...")
+def cancel_appointment(connection):
+    cursor = connection.cursor()
+    
+    patient_name = input("Enter your name: ")
+    
+    cursor.execute("SELECT patientNo FROM patientRecords WHERE Name = %s", (patient_name,))
+    patient = cursor.fetchone()
 
-def generate_reports():
-    print("Generating reports...")
+    if not patient:
+        print("Patient not found. Invalid command.")
+        return
 
-def access_schedules():
-    print("Accessing schedules...")
+    display_table(connection, "AdmissionEntry", str("SELECT * FROM AdmissionEntry WHERE patientNo = %s", (patient)))
+    ch = input("Are you sure you wish to cancel this appointment? (YES | NO) : ")
+    print("Cancelling Patient Appointment")
 
-def debug_system():
+    cursor.execute(
+        "DROP FROM AdmissionEntry WHERE patientNo = %s",
+        (patient_no)
+    )
+    connection.commit()
+    
+
+def generate_reports(connection):
+    """
+    Generates a report based on user input using an optimized lookup (dictionary).
+    
+    Parameters:
+        connection (object): An active database connection.
+    """
+    # Dictionary mapping of user command (lowercase) to (table_name, SQL query)
+    report_options = {
+        "admission": ("AdmissionEntry", "SELECT * FROM AdmissionEntry;"),
+        "patient": ("patientRecords", "SELECT * FROM patientRecords;"),
+        "employees": ("EmployeeRecords", "SELECT * FROM EmployeeRecords;"),
+        "drugs": ("Pharmacy", "SELECT * FROM Pharmacy;")
+    }
+
+    ch = input(
+        "Which datastore would you like to see?\n"
+        "AdmissionEntry - ADMISSION\n"
+        "PatientRecords - PATIENT\n"
+        "EmployeeRecords - EMPLOYEES\n"
+        "Pharmacy - DRUGS\n"
+        "Enter Command: "
+    ).strip().lower()
+
+    if ch in report_options:
+        table_name, query = report_options[ch]
+        display_table(connection, table_name, query)
+    else:
+        print("Invalid command.")
+
+    exit()
+
+
+def access_schedules(connection):
+    """
+    Displays the schedules of all doctors in a human-readable tabular format.
+    """
+    try:
+        cursor = connection.cursor()
+        query = """
+        SELECT ER.Name, ER.Designation, ES.DailySchedules 
+        FROM EmployeeRecords ER
+        JOIN EmployeeSchedules ES ON ER.EmployeeNo = ES.EmployeeNo
+        WHERE ER.Designation = 'Doctor';
+        """
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+        if not rows:
+            print("No schedules available for doctors.")
+            return
+
+        # Prepare data for display
+        schedule_data = []
+        for name, designation, schedules_json in rows:
+            schedules = json.loads(schedules_json)  # Parse the JSON to extract schedules
+            for schedule in schedules:
+                schedule_data.append([name, designation, schedule['time'], schedule['detail']])
+
+        # Display in a readable table format
+        print(tabulate(schedule_data, headers=["Name", "Designation", "Time", "Activity"], tablefmt="pretty"))
+
+    except Exception as e:
+        print(f"Error accessing schedules: {e}")
+
+def debug_system(connection):
     print("Debugging system...")
+    exit();
 
-def restart_system():
+def restart_system(connection):
     print("Restarting system...")
+    return;
 
 
 def manage_auth(connection):

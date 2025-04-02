@@ -1,3 +1,6 @@
+class TemplateF:
+    def __init__(self):
+
 class Employee:
     def __init__(self, emp_id, dob, gender):
         self.emp_id = emp_id

@@ -1,0 +1,84 @@
+@startuml
+!include <C4/C4_Context>
+
+System_Boundary(c1, "Hospital Database") {
+
+    entity EmployeeRecords {
+        EmployeeNo (PK)
+        Name
+        PhoneNo
+        Gender
+        Birthday
+        Join_date
+        Designation
+    }
+
+    entity AdministrationInfo {
+        EmployeeId (PK, FK)
+        Name
+        PhoneNo
+        AuthorizationLevel
+    }
+
+    entity patientRecords {
+        patientNo (PK)
+        Name
+        PhoneNo
+        Gender
+        Birthday
+        Account_number
+    }
+
+    entity AdmissionEntry {
+        LogEntry (PK)
+        PatientNo (FK)
+        RoomNo
+        DoctorAssigned
+        Booking_date
+    }
+
+    entity RoomPlan {
+        RoomId (PK)
+        bedCount
+        OccupiedCount
+        roomType
+        PatientId (FK)
+    }
+
+    entity FloorPlan {
+        FloorNumber (PK)
+        RoomId (FK)
+        FloorWarden
+        WardenId
+    }
+
+    entity PrescriptionLog {
+        TrackingNo (PK)
+        ItemNo (FK)
+        PatientNo (FK)
+        PatientName
+        PrescribingDoctorsName
+        PurchaseTime
+    }
+
+    entity Pharmacy {
+        ItemNo (PK)
+        ProductName
+        SellerName
+        PrescriptionSource (FK)
+        Price
+    }
+
+
+    EmployeeRecords "1" -- "n" AdministrationInfo : manages
+    EmployeeRecords "1" -- "n" AdmissionEntry : assigned
+    patientRecords "1" -- "n" AdmissionEntry : admitted
+    patientRecords "1" -- "n" RoomPlan : stays in
+    RoomPlan "1" -- "n" FloorPlan : located on
+    patientRecords "1" -- "n" PrescriptionLog : receives
+    Pharmacy "1" -- "n" PrescriptionLog : contains
+
+
+}
+
+@enduml

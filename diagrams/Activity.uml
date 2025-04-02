@@ -1,0 +1,50 @@
+@startuml
+start
+:User Logs In;
+if (Is Login Valid?) then (Yes)
+    :Retrieve User Role;
+    switch (User Role)
+        case (Patient)
+            :Show Menu [APPLY, CANCEL];
+            :Wait for Command;
+            if (Command == APPLY) then (Yes)
+                :Execute apply_appointment();
+            else if (Command == CANCEL) then (Yes)
+                :Execute cancel_appointment();
+            endif
+        case (Employee)
+            :Show Menu [REPORTS, TODO];
+            :Wait for Command;
+            if (Command == REPORTS) then (Yes)
+                :Generate Reports;
+            else if (Command == TODO) then (Yes)
+                :Show Schedule;
+            endif
+        case (IT_Officer)
+            :Show Menu [DEBUG, RESTART, AUTH];
+            :Wait for Command;
+            if (Command == DEBUG) then (Yes)
+                :Run Debugging;
+            else if (Command == RESTART) then (Yes)
+                :Restart System;
+            else if (Command == AUTH) then (Yes)
+                :Manage Authentication;
+            endif
+        case (Contractor)
+            :Show Menu [TODO, AUTH];
+            :Wait for Command;
+            if (Command == TODO) then (Yes)
+                :Show Schedule;
+            else if (Command == AUTH) then (Yes)
+                :Manage Authentication;
+            endif
+        case (Administrator)
+            :Show Menu [ALL COMMANDS];
+            :Wait for Command;
+            :Execute Command Based on Selection;
+    endswitch
+else (No)
+    :Display Login Error;
+endif
+stop
+@enduml

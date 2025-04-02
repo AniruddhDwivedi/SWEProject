@@ -1,23 +1,24 @@
 @startuml
-[*] --> EmployeeLogin : Start
 
-EmployeeLogin --> VerifyPatientRecord : Initiate Booking
+[*] --> Idle
 
-VerifyPatientRecord --> RegisterPatient : Patient Record Not Found
-RegisterPatient --> ProvidePatientDetails : Registration Complete
+Idle --> Authenticate : Start Authentication
+Authenticate --> CheckCredentials : Try Username & Password
+CheckCredentials --> LoginSuccess : Credentials Valid
+LoginSuccess --> [*] : End Authentication
 
-VerifyPatientRecord --> ProvidePatientDetails : Patient Exists
-ProvidePatientDetails --> AssignDoctor : Details Provided
+CheckCredentials --> IncorrectCredentials : Credentials Invalid
+IncorrectCredentials --> Authenticate : Retry (Attempts Left)
 
-AssignDoctor --> ChooseAppointmentSlot : Doctor Selected
-ChooseAppointmentSlot --> ConfirmBooking : Time Slot Selected
-ConfirmBooking --> BookingSuccessful : Confirm Appointment
+Authenticate --> LockedOut : Too Many Failed Attempts
+LockedOut --> [*] : End Authentication
 
-BookingSuccessful --> CancelBooking : Cancel Appointment
-CancelBooking --> EndSession : Appointment Cancelled
+Idle --> CreateUser : Create New User
+CreateUser --> UserCreated : User Successfully Created
+UserCreated --> [*] : End Creation
 
-BookingSuccessful --> AppointmentComplete : End
-AppointmentComplete --> EndSession : End
+Idle --> DeleteUser : Delete User
+DeleteUser --> UserDeleted : User Successfully Deleted
+UserDeleted --> [*] : End Deletion
 
-EndSession --> [*]
 @enduml
